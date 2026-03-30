@@ -10,22 +10,20 @@ const DURATIONS = [
 
 export default function HomeScreen({ onStart }) {
   const [selected,    setSelected]    = useState(null);
-  const [customText,  setCustomText]  = useState('');
   const [duration,    setDuration]    = useState(120); // default 2 min
 
   const handleStart = () => {
-    const value = customText.trim() || selected;
-    if (!value) return;
-    onStart(value, duration);
+    if (!selected) return;
+    onStart(selected, duration);
   };
 
-  const canStart = customText.trim().length > 0 || selected !== null;
+  const canStart = selected !== null;
 
   return (
     <div style={styles.screen}>
       <header style={styles.header}>
         <h1 style={styles.title}>Как ты себя чувствуешь?</h1>
-        <p style={styles.subtitle}>Выбери состояние или опиши своё</p>
+        <p style={styles.subtitle}>Выбери состояние</p>
       </header>
 
       {/* State chips */}
@@ -35,28 +33,13 @@ export default function HomeScreen({ onStart }) {
             key={s.id}
             style={{
               ...styles.chip,
-              ...(selected === s.id && !customText ? styles.chipActive : {}),
+              ...(selected === s.id ? styles.chipActive : {}),
             }}
-            onClick={() => { setSelected(s.id); setCustomText(''); }}
+            onClick={() => setSelected(s.id)}
           >
             {s.label}
           </button>
         ))}
-      </div>
-
-      {/* Free-text input */}
-      <div style={styles.inputWrap}>
-        <input
-          style={styles.input}
-          type="text"
-          placeholder="Или напиши сам… «волнуюсь перед встречей»"
-          value={customText}
-          onChange={(e) => {
-            setCustomText(e.target.value);
-            if (e.target.value) setSelected(null);
-          }}
-          onKeyDown={(e) => e.key === 'Enter' && canStart && handleStart()}
-        />
       </div>
 
       {/* Duration picker */}
@@ -136,23 +119,6 @@ const styles = {
     background: '#A8C3D1',
     borderColor: '#A8C3D1',
     color: '#fff',
-  },
-  inputWrap: {
-    width: '100%',
-    maxWidth: 380,
-  },
-  input: {
-    width: '100%',
-    padding: '0.85rem 1.1rem',
-    borderRadius: 14,
-    border: '1.5px solid #D6CFC6',
-    background: 'rgba(255,255,255,0.6)',
-    fontSize: '0.95rem',
-    color: '#3A3A3A',
-    outline: 'none',
-    transition: 'border-color 0.2s ease',
-    boxSizing: 'border-box',
-    fontFamily: 'inherit',
   },
   durationSection: {
     display: 'flex',
