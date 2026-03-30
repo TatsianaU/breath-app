@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import BreathingWave from './BreathingWave';
 import { useAmbientSound } from '../hooks/useAmbientSound';
 
@@ -9,13 +9,6 @@ const SOUND_ICON  = { null: '🔇', ocean: '🌊', rain: '🌧️', forest: '�
 // ─── Background cycle ────────────────────────────────────
 const BG_CYCLE = [null, 'ocean', 'forest', 'mountains'];
 const BG_ICON  = { null: '🖼️', ocean: '🌅', forest: '🌿', mountains: '⛰️' };
-
-const MOBILE_GLASS_MQ = '(max-width: 599px)';
-
-function getInitialMobileGlass() {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia(MOBILE_GLASS_MQ).matches;
-}
 
 export default function BreathingScreen({ pattern, duration, onBack }) {
   const [soundIdx, setSoundIdx] = useState(0);
@@ -29,15 +22,6 @@ export default function BreathingScreen({ pattern, duration, onBack }) {
   const currentSound = SOUND_CYCLE[soundIdx];
   const currentBg = BG_CYCLE[bgIdx];
   const hasBg = currentBg !== null;
-
-  const [isMobileGlass, setIsMobileGlass] = useState(getInitialMobileGlass);
-  useEffect(() => {
-    const mq = window.matchMedia(MOBILE_GLASS_MQ);
-    const onChange = () => setIsMobileGlass(mq.matches);
-    onChange();
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
-  }, []);
 
   const handleSoundToggle = useCallback(() => {
     const nextIdx = (soundIdx + 1) % SOUND_CYCLE.length;
@@ -92,20 +76,8 @@ export default function BreathingScreen({ pattern, duration, onBack }) {
       </div>
 
       {/* Main card */}
-      <div
-        style={{
-          ...styles.glassCard,
-          ...(isMobileGlass ? styles.glassCardMobile : {}),
-        }}
-      >
-        <p
-          style={{
-            ...styles.patternLabel,
-            ...(isMobileGlass ? styles.patternLabelMobile : {}),
-          }}
-        >
-          {pattern.label}
-        </p>
+      <div style={styles.glassCard}>
+        <p style={styles.patternLabel}>{pattern.label}</p>
 
         <BreathingWave
           key={sessionKey}
@@ -214,13 +186,6 @@ const styles = {
     ].join(', '),
   },
 
-  glassCardMobile: {
-    background: 'rgba(255,255,255,0.10)',
-    backdropFilter: 'blur(10px)',
-    border: '1px solid rgba(255,255,255,0.35)',
-    boxShadow: '0 6px 18px rgba(0,0,0,0.15)',
-  },
-
   patternLabel: {
     fontSize: '0.80rem',
 
@@ -233,10 +198,6 @@ const styles = {
 
     // 🔥 делает читаемым на фоне картинок
     textShadow: '0 1px 2px rgba(0,0,0,0.25)',
-  },
-
-  patternLabelMobile: {
-    color: 'rgba(40,40,40,0.65)',
   },
 
   finishOverlay: {
