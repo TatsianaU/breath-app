@@ -18,6 +18,21 @@ body {
 
 button {
   font-family: inherit;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border-style: solid;
+}
+
+button:focus,
+button:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+button::-moz-focus-inner {
+  border: 0;
 }
 
 input {
@@ -30,6 +45,20 @@ input::placeholder {
 
 input:focus {
   border-color: #A8C3D1 !important;
+}
+
+.home-state-chips button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.home-state-chips button:focus,
+.home-state-chips button:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.home-state-chips button:active {
+  transform: scale(0.96);
 }
 
 @media (max-width: 380px) {

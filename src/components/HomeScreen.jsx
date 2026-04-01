@@ -82,7 +82,9 @@ export default function HomeScreen({ onStart }) {
 const chipBase = {
   padding: '0.5rem 1.2rem',
   borderRadius: 999,
-  border: '1.5px solid #D6CFC6',
+  borderWidth: '1.5px',
+  borderStyle: 'solid',
+  borderColor: '#D6CFC6',
   background: 'transparent',
   color: '#5A5A5A',
   fontSize: '0.88rem',
@@ -91,6 +93,8 @@ const chipBase = {
   letterSpacing: '0.02em',
   outline: 'none',
   fontFamily: 'inherit',
+  appearance: 'none',
+  WebkitAppearance: 'none',
 };
 
 const styles = {
@@ -142,6 +146,12 @@ const styles = {
     width: '100%',
     minWidth: 0,
     textAlign: 'center',
+    borderRadius: 999,
+    overflow: 'hidden',
+    WebkitTapHighlightColor: 'transparent',
+    outline: 'none',
+    outlineOffset: 0,
+    transition: 'transform 0.1s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease',
   },
   chipDesc: {
     display: 'block',
@@ -159,6 +169,8 @@ const styles = {
   },
   chipActive: {
     background: '#A8C3D1',
+    borderWidth: '1.5px',
+    borderStyle: 'solid',
     borderColor: '#A8C3D1',
     color: '#fff',
   },
@@ -178,7 +190,9 @@ const styles = {
   startBtn: {
     padding: '0.8rem 3rem',
     borderRadius: 999,
-    border: 'none',
+    borderWidth: 0,
+    borderStyle: 'solid',
+    borderColor: 'transparent',
     background: '#A8C3D1',
     color: '#fff',
     fontSize: '1rem',
@@ -188,6 +202,8 @@ const styles = {
     transition: 'opacity 0.2s ease',
     outline: 'none',
     fontFamily: 'inherit',
+    appearance: 'none',
+    WebkitAppearance: 'none',
   },
   startBtnDisabled: {
     opacity: 0.4,
