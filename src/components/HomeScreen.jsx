@@ -52,12 +52,12 @@ export default function HomeScreen({ onStart }) {
       {/* Duration picker */}
       <div style={styles.durationSection}>
         <p style={styles.durationLabel}>Длительность</p>
-        <div style={styles.chips}>
+        <div className="home-duration-chips" style={styles.chips}>
           {DURATIONS.map((d) => (
             <button
               key={d.value}
               style={{
-                ...styles.chip,
+                ...styles.chipDuration,
                 ...(duration === d.value ? styles.chipActive : {}),
               }}
               onClick={() => setDuration(d.value)}
@@ -135,7 +135,17 @@ const styles = {
     maxWidth: 420,
     justifyItems: 'stretch',
   },
-  chip: chipBase,
+  /** Длительность: те же tap/focus/press, что у state-кнопок */
+  chipDuration: {
+    ...chipBase,
+    borderRadius: 999,
+    overflow: 'hidden',
+    WebkitTapHighlightColor: 'transparent',
+    outline: 'none',
+    outlineOffset: 0,
+    transition:
+      'transform 0.1s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease',
+  },
   chipState: {
     ...chipBase,
     padding: '0.45rem 0.55rem',

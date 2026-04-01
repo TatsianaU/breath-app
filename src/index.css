@@ -61,6 +61,20 @@ input:focus {
   transform: scale(0.96);
 }
 
+.home-duration-chips button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.home-duration-chips button:focus,
+.home-duration-chips button:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.home-duration-chips button:active {
+  transform: scale(0.96);
+}
+
 @media (max-width: 380px) {
   .home-state-chips {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
