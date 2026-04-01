@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import BreathingWave from './BreathingWave';
 import { useAmbientSound } from '../hooks/useAmbientSound';
+import { formatBreathingPattern } from '../utils/getBreathingPattern';
 
 // ─── Sound cycle ─────────────────────────────────────────
 const SOUND_CYCLE = [null, 'ocean', 'rain', 'forest'];
@@ -10,7 +11,9 @@ const SOUND_ICON  = { null: '🔇', ocean: '🌊', rain: '🌧️', forest: '�
 const BG_CYCLE = [null, 'ocean', 'forest', 'mountains'];
 const BG_ICON  = { null: '🖼️', ocean: '🌅', forest: '🌿', mountains: '⛰️' };
 
-export default function BreathingScreen({ pattern, duration, onBack }) {
+export default function BreathingScreen({ pattern, duration, onBack, label, description }) {
+  const title = label ?? '';
+  const subtitle = description ?? (formatBreathingPattern(pattern) ? `дыхание ${formatBreathingPattern(pattern)}` : '');
   const [soundIdx, setSoundIdx] = useState(0);
   const [bgIdx, setBgIdx] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
@@ -77,7 +80,11 @@ export default function BreathingScreen({ pattern, duration, onBack }) {
 
       {/* Main card */}
       <div style={styles.glassCard}>
-        <p style={styles.patternLabel}>{pattern.label}</p>
+        <p style={styles.patternLabel}>
+          {title}
+          <br />
+          <span style={styles.patternTiming}>{subtitle}</span>
+        </p>
 
         <BreathingWave
           key={sessionKey}
@@ -193,11 +200,23 @@ const styles = {
     color: 'rgba(60,70,65,0.85)',
 
     letterSpacing: '0.14em',
-    textTransform: 'uppercase',
+    textTransform: 'none',
     margin: 0,
+    textAlign: 'center',
+    lineHeight: 1.45,
 
     // 🔥 делает читаемым на фоне картинок
     textShadow: '0 1px 2px rgba(0,0,0,0.25)',
+  },
+
+  patternTiming: {
+    display: 'inline-block',
+    marginTop: '0.35rem',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    letterSpacing: '0.09em',
+    textTransform: 'none',
+    color: 'rgba(60,70,65,0.62)',
   },
 
   finishOverlay: {

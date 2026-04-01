@@ -36,43 +36,81 @@ const INIT_TX    = -(ALIGN_N * PERIOD_W - CENTER_X);
 const FADE_OUT_S = 2.0;   // seconds of fade-out after session ends
 
 // ─── Labels ────────────────────────────────────────────────────────────────
-const PHASE_LABELS = { inhale: 'Вдох', hold: 'Задержка', exhale: 'Выдох' };
+const PHASE_LABELS = {
+  inhale: 'Вдох',
+  hold: 'Задержка',
+  exhale: 'Выдох',
+  holdAfterExhale: 'Задержка',
+};
 
 // ─── Math helpers ──────────────────────────────────────────────────────────
 
+function holdAfterExhaleSec(pattern) {
+  return pattern.holdAfterExhale ?? pattern.hold2 ?? 0;
+}
+
 /** Y coordinate for a 0-1 progress through one breathing cycle. */
-function waveY(progress, { inhale, hold = 0, exhale }) {
-  const total = inhale + hold + exhale;
-  const ir    = inhale / total;
-  const hr    = hold   / total;
+function waveY(progress, pattern) {
+  const inhale = pattern.inhale;
+  const hold = pattern.hold ?? 0;
+  const exhale = pattern.exhale;
+  const holdAe = holdAfterExhaleSec(pattern);
+  const total = inhale + hold + exhale + holdAe;
+  if (total <= 0) return CENTER_Y;
+
+  const ir = inhale / total;
+  const hr = hold / total;
+  const er = exhale / total;
 
   if (progress <= ir) {
+    if (ir <= 0) return CENTER_Y + AMPLITUDE;
     // Cosine ease: bottom → top
     return CENTER_Y + AMPLITUDE * Math.cos((progress / ir) * Math.PI);
   }
   if (progress <= ir + hr) {
-    return CENTER_Y - AMPLITUDE;  // flat at peak
+    return CENTER_Y - AMPLITUDE; // top plateau
   }
-  // Cosine ease: top → bottom
-  const t = (progress - ir - hr) / (1 - ir - hr);
-  return CENTER_Y - AMPLITUDE * Math.cos(t * Math.PI);
+  if (progress <= ir + hr + er) {
+    if (er <= 0) return CENTER_Y + AMPLITUDE;
+    // Cosine ease: top → bottom
+    const t = (progress - ir - hr) / er;
+    return CENTER_Y - AMPLITUDE * Math.cos(t * Math.PI);
+  }
+  // holdAfterExhale — bottom plateau
+  return CENTER_Y + AMPLITUDE;
 }
 
 /** Phase name + seconds remaining in that phase. */
-function phaseAt(progress, { inhale, hold = 0, exhale }) {
-  const total = inhale + hold + exhale;
-  const ir    = inhale / total;
-  const hr    = hold   / total;
+function phaseAt(progress, pattern) {
+  const inhale = pattern.inhale;
+  const hold = pattern.hold ?? 0;
+  const exhale = pattern.exhale;
+  const holdAe = holdAfterExhaleSec(pattern);
+  const total = inhale + hold + exhale + holdAe;
+  const ir = inhale / total;
+  const hr = hold / total;
+  const er = exhale / total;
+  const ar = holdAe / total;
 
   if (progress <= ir) {
+    if (ir <= 0) return { phase: 'inhale', remaining: 0 };
     return { phase: 'inhale', remaining: (1 - progress / ir) * inhale };
   }
   if (progress <= ir + hr) {
+    if (hr <= 0) return { phase: 'hold', remaining: 0 };
     const t = (progress - ir) / hr;
-    return { phase: 'hold',   remaining: (1 - t) * hold };
+    return { phase: 'hold', remaining: (1 - t) * hold };
   }
-  const t = (progress - ir - hr) / (1 - ir - hr);
-  return { phase: 'exhale',   remaining: (1 - t) * exhale };
+  if (progress <= ir + hr + er) {
+    if (er <= 0) return { phase: 'exhale', remaining: 0 };
+    const t = (progress - ir - hr) / er;
+    return { phase: 'exhale', remaining: (1 - t) * exhale };
+  }
+  if (holdAe <= 0 || ar <= 0) {
+    return { phase: 'holdAfterExhale', remaining: 0 };
+  }
+  const t = (progress - ir - hr - er) / ar;
+  return { phase: 'holdAfterExhale', remaining: (1 - t) * holdAe };
 }
 
 /** Format seconds as MM:SS. */
@@ -127,8 +165,10 @@ export default function BreathingWave({ pattern, duration, onBack, onFinish, dar
   // React state — only for infrequent structural changes
   const [cycleCount, setCycleCount]   = useState(0);
   const [isFinished, setIsFinished]   = useState(false);
+  const [backHover, setBackHover]     = useState(false);
 
-  const total   = pattern.inhale + (pattern.hold ?? 0) + pattern.exhale;
+  const total =
+    pattern.inhale + (pattern.hold ?? 0) + pattern.exhale + holdAfterExhaleSec(pattern);
   const speed   = PERIOD_W / total;     // px/s
   const pathD   = useMemo(() => buildPath(pattern), [pattern]);
 
@@ -300,7 +340,20 @@ export default function BreathingWave({ pattern, duration, onBack, onFinish, dar
       </p>
 
       {/* ── Back button ───────────────────────────────────────────────────── */}
-      <button style={styles.backBtn} onClick={onBack}>
+      <button
+        type="button"
+        style={{
+          ...styles.backBtn,
+          color: darkBg ? 'rgba(255,255,255,0.75)' : '#6A6A6A',
+          textShadow: darkBg
+            ? '0 1px 2px rgba(0,0,0,0.35)'
+            : '0 1px 2px rgba(255,255,255,0.45)',
+          opacity: darkBg ? (backHover ? 1 : 0.9) : 1,
+        }}
+        onMouseEnter={() => setBackHover(true)}
+        onMouseLeave={() => setBackHover(false)}
+        onClick={onBack}
+      >
         {isFinished ? '← На главную' : '← Назад'}
       </button>
     </div>
@@ -391,11 +444,12 @@ const styles = {
   backBtn: {
     background: 'none',
     border: 'none',
-    color: '#8A8A8A',
     fontSize: '0.9rem',
+    fontWeight: 400,
     cursor: 'pointer',
     padding: '0.5rem 1rem',
     letterSpacing: '0.04em',
     fontFamily: 'inherit',
+    transition: 'opacity 0.15s ease',
   },
 };

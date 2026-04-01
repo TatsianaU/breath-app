@@ -12,7 +12,7 @@
  *   inhale  → top-left     (-70, -80)   — side: UP
  *   hold    → top-right    (+70, -80)   — side: RIGHT
  *   exhale  → bottom-right (+70, +80)   — side: DOWN
- *   hold2   → bottom-left  (-70, +80)   — side: LEFT
+ *   holdAfterExhale / hold2 → bottom-left  (-70, +80)   — side: LEFT
  *
  * Each CSS transition duration = the phase's breathing duration,
  * so the ball always arrives at its destination exactly when the
@@ -50,7 +50,9 @@ function transitionDuration(phase, pattern) {
     case 'inhale': return pattern.inhale;
     case 'hold':   return pattern.hold;
     case 'exhale': return pattern.exhale;
-    case 'hold2':  return pattern.hold2 ?? pattern.hold;
+    case 'hold2':
+    case 'holdAfterExhale':
+      return pattern.holdAfterExhale ?? pattern.hold2 ?? pattern.hold;
     default:       return 1;
   }
 }
@@ -58,7 +60,8 @@ function transitionDuration(phase, pattern) {
 export default function BreathingBall({ phase, pattern }) {
   const pathType = pattern.pathType ?? 'vertical';
   const states   = PATH_STATES[pathType] ?? PATH_STATES.vertical;
-  const { x, y, scale } = states[phase] ?? states.idle;
+  const phaseKey = phase === 'holdAfterExhale' ? 'hold2' : phase;
+  const { x, y, scale } = states[phaseKey] ?? states.idle;
   const duration = transitionDuration(phase, pattern);
 
   const style = {

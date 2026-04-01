@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { PRESET_STATES } from '../utils/getBreathingPattern';
+import { STATES } from '../utils/getBreathingPattern';
 
 const DURATIONS = [
   { label: '1 мин',  value: 60  },
@@ -22,22 +22,29 @@ export default function HomeScreen({ onStart }) {
   return (
     <div style={styles.screen}>
       <header style={styles.header}>
-        <h1 style={styles.title}>Как ты себя чувствуешь?</h1>
-        <p style={styles.subtitle}>Выбери состояние</p>
+        <h1 style={styles.title}>Какое состояние нужно?</h1>
+        <p style={styles.subtitle}>Выбери состояние и следуй ритму</p>
       </header>
 
       {/* State chips */}
-      <div style={styles.chips}>
-        {PRESET_STATES.map((s) => (
+      <div className="home-state-chips" style={styles.chipsStates}>
+        {STATES.map((s) => (
           <button
             key={s.id}
             style={{
-              ...styles.chip,
+              ...styles.chipState,
               ...(selected === s.id ? styles.chipActive : {}),
             }}
             onClick={() => setSelected(s.id)}
           >
             {s.label}
+            <span
+              style={
+                selected === s.id ? styles.chipDescActive : styles.chipDesc
+              }
+            >
+              {s.patternLabel}
+            </span>
           </button>
         ))}
       </div>
@@ -72,6 +79,20 @@ export default function HomeScreen({ onStart }) {
   );
 }
 
+const chipBase = {
+  padding: '0.5rem 1.2rem',
+  borderRadius: 999,
+  border: '1.5px solid #D6CFC6',
+  background: 'transparent',
+  color: '#5A5A5A',
+  fontSize: '0.88rem',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
+  letterSpacing: '0.02em',
+  outline: 'none',
+  fontFamily: 'inherit',
+};
+
 const styles = {
   screen: {
     display: 'flex',
@@ -102,18 +123,39 @@ const styles = {
     justifyContent: 'center',
     maxWidth: 380,
   },
-  chip: {
-    padding: '0.5rem 1.2rem',
-    borderRadius: 999,
-    border: '1.5px solid #D6CFC6',
-    background: 'transparent',
-    color: '#5A5A5A',
-    fontSize: '0.88rem',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-    letterSpacing: '0.02em',
-    outline: 'none',
-    fontFamily: 'inherit',
+  chipsStates: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+    gap: '0.65rem',
+    width: '100%',
+    maxWidth: 420,
+    justifyItems: 'stretch',
+  },
+  chip: chipBase,
+  chipState: {
+    ...chipBase,
+    padding: '0.45rem 0.55rem',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '0.1rem',
+    width: '100%',
+    minWidth: 0,
+    textAlign: 'center',
+  },
+  chipDesc: {
+    display: 'block',
+    fontSize: '0.7rem',
+    fontWeight: 400,
+    letterSpacing: '0.06em',
+    color: '#9A9A9A',
+  },
+  chipDescActive: {
+    display: 'block',
+    fontSize: '0.7rem',
+    fontWeight: 400,
+    letterSpacing: '0.06em',
+    color: 'rgba(255,255,255,0.82)',
   },
   chipActive: {
     background: '#A8C3D1',

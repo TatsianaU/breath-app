@@ -1,14 +1,20 @@
 import { useState } from 'react';
 import HomeScreen from './components/HomeScreen';
 import BreathingScreen from './components/BreathingScreen';
-import { getBreathingPattern } from './utils/getBreathingPattern';
+import { getBreathingPattern, getPresetMeta } from './utils/getBreathingPattern';
 
 export default function App() {
-  // session: null | { pattern, duration (seconds) }
+  // session: null | { pattern, duration, label, description }
   const [session, setSession] = useState(null);
 
   const handleStart = (stateInput, duration) => {
-    setSession({ pattern: getBreathingPattern(stateInput), duration });
+    const { label, description } = getPresetMeta(stateInput);
+    setSession({
+      pattern: getBreathingPattern(stateInput),
+      duration,
+      label,
+      description,
+    });
   };
 
   const handleBack = () => setSession(null);
@@ -19,6 +25,8 @@ export default function App() {
         <BreathingScreen
           pattern={session.pattern}
           duration={session.duration}
+          label={session.label}
+          description={session.description}
           onBack={handleBack}
         />
       ) : (
