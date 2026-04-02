@@ -1,16 +1,44 @@
-# React + Vite
+# breath-app — приложение “состояния и дыхание”
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+breath-app помогает управлять самочувствием через дыхательные техники. На главном экране пользователь выбирает **состояние**, а затем задаёт **длительность** сессии. После старта приложение автоматически ведёт по заданному ритму дыхания и визуально показывает, что происходит сейчас.
 
-Currently, two official plugins are available:
+## Как пользоваться
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. На главном экране выбери **состояние**.
+2. Выбери **длительность** (1, 2, 3 или 5 минут).
+3. Нажми **«Начать»**.
 
-## React Compiler
+## Что видно во время дыхания
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+На экране дыхания отображаются:
+- выбранное **состояние** (название режима)
+- **описание дыхания** в формате ритма (например, `дыхание 4–6`, `дыхание 4–2–4`, `дыхание 4–4–4–4`)
+- большой таймер с оставшимся временем
+- текущая фаза и её счётчик (вдох / задержка / выдох)
+- анимированная волна и движение шарика синхронно с фазами
 
-## Expanding the ESLint configuration
+Дополнительно доступны:
+- переключение фоновой атмосферы (изображение)
+- переключение фонового звука (если включён)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+После завершения сессии появляется экран с сообщением о завершении и возможностью:
+- **продолжить**
+- **вернуться на главную**
+
+## Состояния и дыхательные паттерны
+
+Доступные режимы:
+
+- **Ясность** — дыхание `4–6`
+- **Спокойствие** — дыхание `4–4–6`
+- **Фокус** — дыхание `4–2–4`
+- **Стабильность** — дыхание `4–4–4–4` (включает паузу после выдоха)
+- **Расслабление** — дыхание `4–7–8`
+- **Энергия** — дыхание `2–1–2`
+
+## Особенности техники “Стабильность (4–4–4–4)”
+
+Режим включает удержание:
+- и сверху (перед выдохом),
+- и снизу (после выдоха),
+поэтому пользователь визуально видит “нижнюю плато-фазу” вместе с паузой.
