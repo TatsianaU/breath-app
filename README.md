@@ -1,44 +1,162 @@
-# breath-app — приложение “состояния и дыхание”
+# Breath App
 
-breath-app помогает управлять самочувствием через дыхательные техники. На главном экране пользователь выбирает **состояние**, а затем задаёт **длительность** сессии. После старта приложение автоматически ведёт по заданному ритму дыхания и визуально показывает, что происходит сейчас.
+An interactive React application that guides users through timed breathing sessions with synchronized animation, phase instructions, ambient sounds, and visual backgrounds.
 
-## Как пользоваться
+**Live demo:** [breath-app-phi.vercel.app](https://breath-app-phi.vercel.app)
 
-1. На главном экране выбери **состояние**.
-2. Выбери **длительность** (1, 2, 3 или 5 минут).
-3. Нажми **«Начать»**.
+The interface is currently available in Russian.
 
-## Что видно во время дыхания
+## How It Works
 
-На экране дыхания отображаются:
-- выбранное **состояние** (название режима)
-- **описание дыхания** в формате ритма (например, `дыхание 4–6`, `дыхание 4–2–4`, `дыхание 4–4–4–4`)
-- большой таймер с оставшимся временем
-- текущая фаза и её счётчик (вдох / задержка / выдох)
-- анимированная волна и движение шарика синхронно с фазами
+1. Select the state you want to support.
+2. Choose a session duration.
+3. Start the session.
+4. Follow the animated breathing guide and phase countdown.
+5. Continue the session or return to the home screen when it finishes.
 
-Дополнительно доступны:
-- переключение фоновой атмосферы (изображение)
-- переключение фонового звука (если включён)
+## Breathing Modes
 
-После завершения сессии появляется экран с сообщением о завершении и возможностью:
-- **продолжить**
-- **вернуться на главную**
+| State      | Pattern |
+| ---------- | ------- |
+| Clarity    | 4–6     |
+| Calm       | 4–4–6   |
+| Focus      | 4–2–4   |
+| Stability  | 4–4–4–4 |
+| Relaxation | 4–7–8   |
+| Energy     | 2–1–2   |
 
-## Состояния и дыхательные паттерны
+The `4–4–4–4` stability mode includes pauses after both inhalation and exhalation and uses a box-style breathing path.
 
-Доступные режимы:
+## Session Durations
 
-- **Ясность** — дыхание `4–6`
-- **Спокойствие** — дыхание `4–4–6`
-- **Фокус** — дыхание `4–2–4`
-- **Стабильность** — дыхание `4–4–4–4` (включает паузу после выдоха)
-- **Расслабление** — дыхание `4–7–8`
-- **Энергия** — дыхание `2–1–2`
+Users can choose:
 
-## Особенности техники “Стабильность (4–4–4–4)”
+* 1 minute
+* 2 minutes
+* 3 minutes
+* 5 minutes
 
-Режим включает удержание:
-- и сверху (перед выдохом),
-- и снизу (после выдоха),
-поэтому пользователь визуально видит “нижнюю плато-фазу” вместе с паузой.
+## Key Features
+
+* Six configurable breathing patterns
+* Animated breathing wave and guide ball
+* Current-phase label and phase countdown
+* Full-session countdown timer
+* Breathing-cycle counter
+* Smooth session completion and fade-out
+* Continue or return-home actions
+* Responsive interface for desktop and mobile
+* Optional ambient sounds
+* Optional visual backgrounds
+
+## Ambient Experience
+
+### Sounds
+
+* Ocean
+* Rain
+* Forest
+
+Audio elements are preloaded and reused. Sound transitions use gradual fade-in and fade-out instead of abrupt playback changes.
+
+### Backgrounds
+
+* Ocean
+* Forest
+* Mountains
+
+The breathing interface uses a translucent glass-style card to remain readable over background images.
+
+## Animation Architecture
+
+The breathing engine uses a single `requestAnimationFrame` loop.
+
+The following elements are derived from the same elapsed-time value:
+
+* Wave movement
+* Guide-ball position
+* Current breathing phase
+* Phase countdown
+* Session timer
+* Cycle counter
+* Final fade-out
+
+Using one time source prevents the timer and visual animation from drifting out of sync.
+
+Frequently changing visual values are written through DOM references instead of causing a React render on every animation frame.
+
+## Tech Stack
+
+* React 19
+* JavaScript
+* Vite
+* SVG
+* Web Audio through `HTMLAudioElement`
+* `requestAnimationFrame`
+* CSS and responsive layouts
+* ESLint
+
+## Project Structure
+
+```text
+src/
+├── components/
+│   ├── HomeScreen.jsx
+│   ├── BreathingScreen.jsx
+│   ├── BreathingWave.jsx
+│   └── BreathingBall.jsx
+├── hooks/
+│   └── useAmbientSound.js
+├── utils/
+│   └── getBreathingPattern.js
+├── App.jsx
+├── index.css
+└── main.jsx
+```
+
+## Getting Started
+
+### Requirements
+
+* Node.js 20 or newer
+* npm
+
+### Installation
+
+```bash
+git clone https://github.com/TatsianaU/breath-app.git
+cd breath-app
+npm install
+```
+
+### Development
+
+```bash
+npm run dev
+```
+
+Vite will display the local development URL in the terminal.
+
+### Production build
+
+```bash
+npm run build
+```
+
+### Preview the build
+
+```bash
+npm run preview
+```
+
+### Lint the project
+
+```bash
+npm run lint
+```
+
+## Current Status
+
+The application is deployed and available as a working frontend project.
+
+Possible future improvements include accessibility refinements, user-defined breathing patterns, session history, multilingual interface support, and automated tests.
